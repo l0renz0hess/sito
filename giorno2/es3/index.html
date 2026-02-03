@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		body {
+			background-color: gray;
+		}
+	</style>
+</head>
+<body>
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+	<script>
+
+		let shape;
+		let tex;
+		let brightnessSlider;
+
+		function preload() {
+			shape = loadModel('Loremz_Ipsum.obj', true)
+			tex = loadImage('Loremz_Ipsum.jpg');
+		}
+
+		function setup() {
+			createCanvas(800, 600, WEBGL);
+			brightnessSlider = createSlider(0, 255, 120); // min, max, valore iniziale
+			brightnessSlider.position(10, 10);
+			brightnessSlider.style('width', '200px');
+		}
+
+		function draw() {
+			background(0)
+
+			// --- ILLUMINAZIONE ---
+			// Lo slider controlla la luminosità della luce ambientale
+			let brightness = brightnessSlider.value();
+			ambientLight(brightness);
+			// Aggiungo una luce direzionale per dare profondità e ombre
+			directionalLight(255, 255, 255, 0.5, 0, -1);
+
+			// --- TRASFORMAZIONI E MODELLO ---
+			// orbitControl()
+			rotateY(frameCount * 0.01);
+			rotateX(PI);
+			scale(2);
+
+			noStroke()
+			texture(tex);
+			model(shape)
+		}
+
+
+	</script>
+</body>
+</html>

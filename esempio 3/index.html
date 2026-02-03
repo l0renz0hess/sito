@@ -4,78 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Homepage</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    :root {
+      --main-color: #000000;
+    }
+
+    * {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      background-color: #f5f5f5;
-      color: #333;
-      padding: 50px;
+      padding: 0;
       box-sizing: border-box;
     }
 
-    :root {
-      --main-color: #000000; /* valore di default, sovrascritto da JS */
+    body {
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
     }
 
-    .top-section {
-      text-align: left;
+    section {
+      height: 100vh;
+      width: 100%;
+      padding: 40px;
+      position: relative;
     }
 
-    h1 {
-      font-size: 4em;
-      margin: 0;
-      color: var(--main-color);
+    /* --- HERO SECTION --- */
+    .hero {
+      background-color: var(--main-color);
+      color: white;
     }
 
-    a {
+    .name {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      font-size: 4rem;
+    }
+
+    .instagram {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      font-size: 1.2rem;
       text-decoration: none;
-      color: #333;
-      font-size: 1.5em;
-      transition: color 0.3s;
-      display: inline-block;
-      margin: 10px 0;
+      color: white;
+      transition: opacity 0.3s ease;
     }
 
-    a:hover {
-      color: var(--main-color);
+    .instagram:hover {
+      opacity: 0.7;
     }
 
+    /* --- PROJECTS SECTION --- */
     .projects {
-      text-align: left;
+      background-color: white;
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 40px;
     }
 
     .projects h2 {
-      font-size: 2em;
-      margin-bottom: 10px;
+      font-size: 2rem;
+      margin-bottom: 20px;
     }
 
     .projects a {
-      font-size: 1.2em;
-      margin: 5px 0;
+      font-size: 1.5rem;
+      text-decoration: none;
+      color: #111;
+      margin: 8px 0;
+      transition: color 0.3s ease;
+    }
+
+    .projects a:hover {
+      color: var(--main-color);
     }
   </style>
 </head>
-<body>
-  <div class="top-section">
-    <h1 id="nomeCognome">Nome Cognome</h1>
-    <a href="https://instagram.com" target="_blank">Instagram</a>
-  </div>
 
-  <div class="projects">
+<body>
+
+  <!-- Prima schermata -->
+  <section class="hero">
+    <a href="https://instagram.com" target="_blank" class="instagram">Instagram</a>
+    <h1 class="name">Lorenzo Hess</h1>
+  </section>
+
+  <!-- Seconda schermata -->
+  <section class="projects">
     <h2>Progetti</h2>
-    <a href="#progetto1">Progetto 1</a><br>
-    <a href="#progetto2">Progetto 2</a><br>
-    <a href="#progetto3">Progetto 3</a><br>
+    <a href="#progetto1">Progetto 1</a>
+    <a href="#progetto2">Progetto 2</a>
+    <a href="#progetto3">Progetto 3</a>
     <a href="#progetto4">Progetto 4</a>
-  </div>
+  </section>
 
   <script>
-    // Genera un colore random
     function getRandomColor() {
       const letters = '0123456789ABCDEF';
       let color = '#';
@@ -86,9 +112,8 @@
     }
 
     const randomColor = getRandomColor();
-
-    // Applica il colore come variabile CSS
     document.documentElement.style.setProperty('--main-color', randomColor);
   </script>
+
 </body>
 </html>

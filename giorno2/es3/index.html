@@ -91,7 +91,7 @@
 		let tex;
 		let brightnessSlider;
 		let rotationSlider;
-		let wireframeCheckbox;
+		let wireframeSlider;
 
 		let mainColor;
 		let currentAngle = 0;
@@ -141,12 +141,16 @@
 			rotationSlider.style('width', '180px');
 			rotationSlider.style('accent-color', randomColorHex);
 
-			// --- Checkbox Wireframe ---
-			wireframeCheckbox = createCheckbox(' Modalità Wireframe', false);
-			wireframeCheckbox.parent(uiContainer);
-			wireframeCheckbox.style('color', 'black');
-			wireframeCheckbox.style('margin-top', '30px'); // Aggiunge un margine superiore per separare i controlli
-			wireframeCheckbox.style('accent-color', randomColorHex);
+			// --- Wireframe Slider ---
+			const wireframeLabel = createP('Wireframe');
+			wireframeLabel.parent(uiContainer);
+			wireframeLabel.style('color', 'black');
+			wireframeLabel.style('margin', '30px 0 8px 0');
+
+			wireframeSlider = createSlider(0, 1, 0, 0.01);
+			wireframeSlider.parent(uiContainer);
+			wireframeSlider.style('width', '180px');
+			wireframeSlider.style('accent-color', randomColorHex);
 		}
 
 		function draw() {
@@ -171,16 +175,27 @@
 			rotateX(PI); // Mantiene l'orientamento verticale iniziale del modello
 			scale(2.5); // Scala il modello per renderlo più grande
 
-			// Gestione modalità Wireframe vs Texture
-			if (wireframeCheckbox.checked()) {
-				stroke(150); // Linee chiare per il wireframe
+			let mix = wireframeSlider.value();
+
+			// 1. Disegna il modello solido (con texture) che svanisce
+			if (mix < 1) {
+				push();
+				noStroke();
+				tint(255, 255 * (1 - mix)); // Opacità inversa al valore dello slider
+				texture(tex);
+				model(shape);
+				pop();
+			}
+
+			// 2. Disegna il wireframe che appare
+			if (mix > 0) {
+				push();
+				stroke(150, 255 * mix); // Opacità diretta
 				strokeWeight(0.5);
 				noFill();
-			} else {
-				noStroke();
-				texture(tex);
+				model(shape);
+				pop();
 			}
-			model(shape);
 		}
 
 		// Funzione per ridimensionare il canvas quando la finestra del browser cambia dimensione

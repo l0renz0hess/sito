@@ -1,56 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<title>Progetto 3D Interattivo</title>
 	<style>
-		body {
-			background-color: gray;
+		/* Reset e stile base */
+		html, body {
+			margin: 0;
+			padding: 0;
+			overflow: hidden; /* Nasconde le scrollbar */
+			font-family: Arial, sans-serif;
+			background-color: #141414; /* Sfondo scuro di fallback */
+		}
+
+		/* Contenitore per i controlli dell'interfaccia */
+		.ui-controls {
+			position: absolute;
+			top: 20px;
+			left: 20px;
+			background-color: rgba(255, 255, 255, 0.9);
+			padding: 15px;
+			border-radius: 8px;
+			color: black;
+			z-index: 10;
+			border: 1px solid rgba(0, 0, 0, 0.2);
+		}
+
+		.ui-controls a {
+			color: black;
+			text-decoration: none;
+			display: block;
+		}
+
+		.ui-controls a:hover {
+			text-decoration: underline;
+		}
+
+		/* Il canvas p5 occuperà tutto lo spazio */
+		canvas {
+			display: block;
 		}
 	</style>
 </head>
 <body>
-	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.min.js"></script>
+	<!-- Contenitore per i controlli che p5.js popolerà -->
+	<div id="ui-container" class="ui-controls">
+		<a href="../../index.html">← Torna alla Home</a>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
 	<script>
 
 		let shape;
 		let tex;
 		let brightnessSlider;
+		let rotationSlider;
+		let wireframeCheckbox;
+		let currentAngle = 0;
 
 		function preload() {
-			shape = loadModel('Loremz_Ipsum.obj', true)
+			// Assicurati che i percorsi dei file siano corretti rispetto a questo file HTML
+			shape = loadModel('Loremz_Ipsum.obj', true);
 			tex = loadImage('Loremz_Ipsum.jpg');
 		}
 
 		function setup() {
-			createCanvas(800, 600, WEBGL);
+			// Crea un canvas che riempie l'intera finestra
+			createCanvas(windowWidth, windowHeight, WEBGL);
+
+			// --- Controlli UI ---
+			// Seleziona il contenitore dall'HTML
+			const uiContainer = select('#ui-container');
+
+			// Crea un'etichetta per lo slider
+			const label = createP('Luminosità');
+			label.parent(uiContainer);
+			label.style('color', 'black');
+			label.style('margin', '15px 0 5px 0'); // Aggiunge spazio sotto il link
+
+			// Crea lo slider per la luminosità e lo inserisce nel contenitore
 			brightnessSlider = createSlider(0, 255, 120); // min, max, valore iniziale
-			brightnessSlider.position(10, 10);
-			brightnessSlider.style('width', '200px');
+			brightnessSlider.parent(uiContainer);
+			brightnessSlider.style('width', '180px');
+
+			// Imposta un colore casuale per lo slider
+			let r = random(255);
+			let g = random(255);
+			let b = random(255);
+			brightnessSlider.style('accent-color', `rgb(${r},${g},${b})`);
+
+			// --- Velocità Rotazione ---
+			const speedLabel = createP('Velocità Rotazione');
+			speedLabel.parent(uiContainer);
+			speedLabel.style('color', 'black');
+			speedLabel.style('margin', '10px 0 5px 0');
+
+			rotationSlider = createSlider(0, 0.05, 0.005, 0.001);
+			rotationSlider.parent(uiContainer);
+			rotationSlider.style('width', '180px');
+			rotationSlider.style('accent-color', `rgb(${r},${g},${b})`);
+
+			// --- Checkbox Wireframe ---
+			wireframeCheckbox = createCheckbox(' Modalità Wireframe', false);
+			wireframeCheckbox.parent(uiContainer);
+			wireframeCheckbox.style('color', 'black');
+			wireframeCheckbox.style('margin-top', '15px');
+			wireframeCheckbox.style('accent-color', `rgb(${r},${g},${b})`);
 		}
 
 		function draw() {
-			background(0)
+			background(20); // Sfondo grigio molto scuro per un look più morbido
 
 			// --- ILLUMINAZIONE ---
 			// Lo slider controlla la luminosità della luce ambientale
 			let brightness = brightnessSlider.value();
 			ambientLight(brightness);
-			// Aggiungo una luce direzionale per dare profondità e ombre
-			directionalLight(255, 255, 255, 0.5, 0, -1);
+			// Luce direzionale per creare ombre e dare un senso di profondità
+			directionalLight(255, 255, 255, 0.5, 0.5, -1);
 
 			// --- TRASFORMAZIONI E MODELLO ---
-			// orbitControl()
-			rotateY(frameCount * 0.01);
-			rotateX(PI);
-			scale(2);
+			// Abilita il controllo interattivo con il mouse (trascina per ruotare, scroll per zoomare)
+			orbitControl();
 
-			noStroke()
-			texture(tex);
-			model(shape)
+			// Mantiene una lenta rotazione automatica che si ferma durante l'interazione
+			currentAngle += rotationSlider.value();
+			rotateY(currentAngle);
+
+			rotateX(PI); // Mantiene l'orientamento verticale iniziale del modello
+			scale(2); // Scala il modello per renderlo più grande
+
+			// Gestione modalità Wireframe vs Texture
+			if (wireframeCheckbox.checked()) {
+				stroke(150); // Linee chiare per il wireframe
+				strokeWeight(0.5);
+				noFill();
+			} else {
+				noStroke();
+				texture(tex);
+			}
+			model(shape);
 		}
 
+		// Funzione per ridimensionare il canvas quando la finestra del browser cambia dimensione
+		function windowResized() {
+			resizeCanvas(windowWidth, windowHeight);
+		}
 
 	</script>
 </body>

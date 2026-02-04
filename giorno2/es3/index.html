@@ -27,6 +27,7 @@
 			color: black;
 			z-index: 10;
 			box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+			font-size: 1.5rem;
 		}
 
 		.ui-controls a {
@@ -34,7 +35,7 @@
 			text-decoration: none;
 			display: block;
 			margin-bottom: 30px;
-			font-weight: bold;
+			font-weight: normal;
 			transition: 0.1s;
 		}
 
@@ -52,6 +53,11 @@
 			left: 250px;
 		}
 
+		/* Rimuove l'outline (bordo) nero che appare quando si clicca sugli slider */
+		.ui-controls input:focus {
+			outline: none;
+		}
+
 		.color-code {
 			position: absolute;
 			bottom: 20px;
@@ -66,7 +72,7 @@
 <body>
 	<!-- Contenitore per i controlli che p5.js popolerà -->
 	<div id="ui-container" class="ui-controls">
-		<a href="../../index.html">← Torna alla Home</a>
+		<a href="../../index.html">← Go back</a>
 	</div>
 	<div id="color-code" class="color-code"></div>
 
@@ -113,19 +119,19 @@
 			const uiContainer = select('#ui-container');
 
 			// Crea un'etichetta per lo slider
-			const label = createP('Luminosità');
+			const label = createP('Texture opacity');
 			label.parent(uiContainer);
 			label.style('color', 'black');
 			label.style('margin', '0 0 8px 0'); // Rimuove il margine superiore e uniforma quello inferiore
 
 			// Crea lo slider per la luminosità e lo inserisce nel contenitore
-			brightnessSlider = createSlider(0, 255, 255); // min, max, valore iniziale
+			brightnessSlider = createSlider(0, 255, 0); // min, max, valore iniziale
 			brightnessSlider.parent(uiContainer);
 			brightnessSlider.style('width', '180px');
 			brightnessSlider.style('accent-color', randomColorHex);
 
 			// --- Velocità Rotazione ---
-			const speedLabel = createP('Velocità Rotazione');
+			const speedLabel = createP('Rotation speed');
 			speedLabel.parent(uiContainer);
 			speedLabel.style('color', 'black');
 			speedLabel.style('margin', '30px 0 8px 0'); // Aggiunge un margine superiore per separare i controlli
@@ -163,7 +169,7 @@
 			rotateY(currentAngle);
 
 			rotateX(PI); // Mantiene l'orientamento verticale iniziale del modello
-			scale(2); // Scala il modello per renderlo più grande
+			scale(2.5); // Scala il modello per renderlo più grande
 
 			// Gestione modalità Wireframe vs Texture
 			if (wireframeCheckbox.checked()) {

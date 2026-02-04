@@ -1,11 +1,206 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Type</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #141414;
+        }
+
+        .ui-controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: white;
+            padding: 30px;
+            box-sizing: border-box;
+            color: black;
+            z-index: 10;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .ui-controls a {
+            color: black;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            transition: 0.3s;
+        }
+
+        .ui-controls a:hover {
+            color: var(--main-color);
+            padding-left: 10px;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 250px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+        }
+
+        .label-ui {
+            font-size: 0.9rem;
+            margin: 15px 0 5px 0;
+            font-weight: bold;
+            display: block;
+        }
+
+        .color-code {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: monospace;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+    </style>
 </head>
 <body>
-    
+    <div id="ui-container" class="ui-controls">
+        <a href="../../index.html">← Go back</a>
+    </div>
+    <div id="color-code" class="color-code"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.min.js"></script>
+    <script>
+        let mainColor;
+        let textInput;
+        let letters = [];
+        let fontSize = 110;
+        
+        // Sliders
+        let magnetSlider, sensitivitySlider, frictionSlider;
+
+        function getRandomColor() {
+            const lettersHex = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) color += lettersHex[Math.floor(Math.random() * 16)];
+            return color;
+        }
+
+        function setup() {
+            createCanvas(windowWidth - 250, windowHeight);
+            
+            const randomColorHex = getRandomColor();
+            document.documentElement.style.setProperty('--main-color', randomColorHex);
+            mainColor = color(randomColorHex);
+            select('#color-code').html(randomColorHex);
+
+            const uiContainer = select('#ui-container');
+
+            // --- UI CONTROLS ---
+            createSpan('TESTO').addClass('label-ui').parent(uiContainer);
+            textInput = createInput('TEXT');
+            textInput.parent(uiContainer);
+            textInput.input(createLetters);
+
+            createSpan('RETURN SPEED').addClass('label-ui').parent(uiContainer);
+            magnetSlider = createSlider(1, 15, 5); // Valore diviso per 100 nel draw
+            magnetSlider.parent(uiContainer).style('width', '180px').style('accent-color', randomColorHex);
+
+            createSpan('MOUSE RADIUS').addClass('label-ui').parent(uiContainer);
+            sensitivitySlider = createSlider(50, 400, 150);
+            sensitivitySlider.parent(uiContainer).style('width', '180px').style('accent-color', randomColorHex);
+
+            createSpan('GLIDE').addClass('label-ui').parent(uiContainer);
+            frictionSlider = createSlider(70, 98, 85); // Valore diviso per 100 nel draw
+            frictionSlider.parent(uiContainer).style('width', '180px').style('accent-color', randomColorHex);
+
+            textAlign(CENTER, CENTER);
+            textFont('Helvetica');
+            textStyle(BOLD);
+            textSize(fontSize);
+
+            createLetters();
+        }
+
+        function createLetters() {
+            letters = [];
+            let str = textInput.value().toUpperCase();
+            let totalWidth = textWidth(str);
+            let startX = (width / 2) - (totalWidth / 2);
+
+            for (let i = 0; i < str.length; i++) {
+                let char = str[i];
+                let x = startX + textWidth(str.substring(0, i)) + textWidth(char) / 2;
+                let y = height / 2;
+                
+                letters.push({
+                    char: char,
+                    homeX: x,
+                    homeY: y,
+                    currX: x,
+                    currY: y,
+                    velX: 0,
+                    velY: 0
+                });
+            }
+        }
+
+        function draw() {
+            background(mainColor);
+
+            // Valori dagli slider
+            let magnetForce = magnetSlider.value() / 100;
+            let repulsionDist = sensitivitySlider.value();
+            let friction = frictionSlider.value() / 100;
+
+            for (let l of letters) {
+                let d = dist(mouseX, mouseY, l.currX, l.currY);
+
+                if (d < repulsionDist) {
+                    // Spinta del mouse
+                    let angle = atan2(l.currY - mouseY, l.currX - mouseX);
+                    let force = map(d, 0, repulsionDist, 12, 0);
+                    l.velX += cos(angle) * force;
+                    l.velY += sin(angle) * force;
+                } else {
+                    // Rientro magnetico alla posizione originale
+                    l.currX = lerp(l.currX, l.homeX, magnetForce);
+                    l.currY = lerp(l.currY, l.homeY, magnetForce);
+                }
+
+                // Applica velocità e frizione
+                l.currX += l.velX;
+                l.currY += l.velY;
+                l.velX *= friction;
+                l.velY *= friction;
+
+                // Logica di wrapping (rientro dai bordi opposti)
+                if (l.currX < 0) l.currX = width;
+                if (l.currX > width) l.currX = 0;
+                if (l.currY < 0) l.currY = height;
+                if (l.currY > height) l.currY = 0;
+
+                fill(255);
+                noStroke();
+                text(l.char, l.currX, l.currY);
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth - 250, windowHeight);
+            createLetters();
+        }
+    </script>
 </body>
 </html>

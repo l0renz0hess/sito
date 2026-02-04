@@ -38,8 +38,9 @@
       position: absolute;
       bottom: 40px;
       left: 40px;
-      font-size: 6rem;
+      font-size: 8rem;
       animation: nameEntrance 1.2s ease-out backwards;
+      z-index: 1;
     }
 
     .instagram {
@@ -51,6 +52,7 @@
       color: white;
       transition: opacity 0.3s ease;
       animation: slideInTop 1s ease-out 0.5s backwards;
+      z-index: 1;
     }
 
     .instagram:hover {
@@ -61,11 +63,12 @@
 
     .color-code {
       position: absolute;
-      bottom: 40px;
-      right: 40px;
-      color: rgba(255, 255, 255, 0.6);
+      top: 40px;
+      left: 40px;
+      color: var(--main-color);
       font-family: monospace;
-      font-size: 1.5rem;
+      font-size: 3rem;
+      font-weight: bold;
     }
 
     /* --- PROJECTS SECTION --- */
@@ -142,14 +145,14 @@
   <section class="hero">
     <a href="https://www.instagram.com/loreh.hess/" target="_blank" class="instagram">Instagram</a>
     <h1 class="name">Lorenzo Hess</h1>
-    <div class="color-code"></div>
   </section>
 
   <!-- Seconda schermata -->
   <section class="projects">
-    <h2>Progetti</h2>
+    <div class="color-code"></div>
+    <h2>Projects</h2>
     <a href="giorno2/es3/index.html">Me, myself and AI</a>
-    <a href="Progetto2">Progetto 2</a>
+    <a href="giorno3/index.html">Type</a>
     <a href="#progetto3">Progetto 3</a>
     <a href="#progetto4">Progetto 4</a>
   </section>

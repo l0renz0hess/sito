@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Progetto 3D Interattivo</title>
+	<title>Me, myself and AI</title>
 	<style>
 		/* Reset e stile base */
 		html, body {
@@ -19,16 +19,16 @@
 			position: absolute;
 			top: 20px;
 			left: 20px;
-			background-color: rgba(255, 255, 255, 0.9);
+			background-color: rgba(0, 0, 0, 0.3);
 			padding: 15px;
 			border-radius: 8px;
-			color: black;
+			color: white;
 			z-index: 10;
-			border: 1px solid rgba(0, 0, 0, 0.2);
+			border: 1px solid rgba(255, 255, 255, 0.2);
 		}
 
 		.ui-controls a {
-			color: black;
+			color: white;
 			text-decoration: none;
 			display: block;
 		}
@@ -41,6 +41,16 @@
 		canvas {
 			display: block;
 		}
+
+		.color-code {
+			position: absolute;
+			bottom: 20px;
+			right: 20px;
+			color: rgba(255, 255, 255, 0.6);
+			font-family: monospace;
+			font-size: 1.2rem;
+			z-index: 10;
+		}
 	</style>
 </head>
 <body>
@@ -48,15 +58,26 @@
 	<div id="ui-container" class="ui-controls">
 		<a href="../../index.html">← Torna alla Home</a>
 	</div>
+	<div id="color-code" class="color-code"></div>
 
-	<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.1/lib/p5.min.js"></script>
 	<script>
+		function getRandomColor() {
+			const letters = '0123456789ABCDEF';
+			let color = '#';
+			for (let i = 0; i < 6; i++) {
+				color += letters[Math.floor(Math.random() * 16)];
+			}
+			return color;
+		}
 
 		let shape;
 		let tex;
 		let brightnessSlider;
 		let rotationSlider;
 		let wireframeCheckbox;
+
+		let mainColor;
 		let currentAngle = 0;
 
 		function preload() {
@@ -69,6 +90,13 @@
 			// Crea un canvas che riempie l'intera finestra
 			createCanvas(windowWidth, windowHeight, WEBGL);
 
+			// --- Stile Pagina ---
+			const randomColorHex = getRandomColor();
+			mainColor = color(randomColorHex); // Oggetto colore p5.js per lo sfondo
+
+			// Mostra il codice colore
+			select('#color-code').html(randomColorHex);
+
 			// --- Controlli UI ---
 			// Seleziona il contenitore dall'HTML
 			const uiContainer = select('#ui-container');
@@ -76,41 +104,37 @@
 			// Crea un'etichetta per lo slider
 			const label = createP('Luminosità');
 			label.parent(uiContainer);
-			label.style('color', 'black');
+			label.style('color', 'white');
 			label.style('margin', '15px 0 5px 0'); // Aggiunge spazio sotto il link
 
 			// Crea lo slider per la luminosità e lo inserisce nel contenitore
 			brightnessSlider = createSlider(0, 255, 120); // min, max, valore iniziale
 			brightnessSlider.parent(uiContainer);
 			brightnessSlider.style('width', '180px');
-
-			// Imposta un colore casuale per lo slider
-			let r = random(255);
-			let g = random(255);
-			let b = random(255);
-			brightnessSlider.style('accent-color', `rgb(${r},${g},${b})`);
+			brightnessSlider.style('accent-color', randomColorHex);
 
 			// --- Velocità Rotazione ---
 			const speedLabel = createP('Velocità Rotazione');
 			speedLabel.parent(uiContainer);
-			speedLabel.style('color', 'black');
+			speedLabel.style('color', 'white');
 			speedLabel.style('margin', '10px 0 5px 0');
 
 			rotationSlider = createSlider(0, 0.05, 0.005, 0.001);
 			rotationSlider.parent(uiContainer);
 			rotationSlider.style('width', '180px');
-			rotationSlider.style('accent-color', `rgb(${r},${g},${b})`);
+			rotationSlider.style('accent-color', randomColorHex);
 
 			// --- Checkbox Wireframe ---
 			wireframeCheckbox = createCheckbox(' Modalità Wireframe', false);
 			wireframeCheckbox.parent(uiContainer);
-			wireframeCheckbox.style('color', 'black');
+			wireframeCheckbox.style('color', 'white');
 			wireframeCheckbox.style('margin-top', '15px');
-			wireframeCheckbox.style('accent-color', `rgb(${r},${g},${b})`);
+			wireframeCheckbox.style('accent-color', randomColorHex);
 		}
 
 		function draw() {
-			background(20); // Sfondo grigio molto scuro per un look più morbido
+			// Usa il colore casuale generato in setup()
+			background(mainColor);
 
 			// --- ILLUMINAZIONE ---
 			// Lo slider controlla la luminosità della luce ambientale

@@ -39,6 +39,7 @@
       bottom: 40px;
       left: 40px;
       font-size: 6rem;
+      animation: nameEntrance 1.2s ease-out backwards;
     }
 
     .instagram {
@@ -49,12 +50,22 @@
       text-decoration: none;
       color: white;
       transition: opacity 0.3s ease;
+      animation: slideInTop 1s ease-out 0.5s backwards;
     }
 
     .instagram:hover {
       opacity: 0.7;
       padding-right: 2%;
       transition: 0.3s
+    }
+
+    .color-code {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: monospace;
+      font-size: 1.5rem;
     }
 
     /* --- PROJECTS SECTION --- */
@@ -97,6 +108,31 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Animazioni di apertura (Intro) */
+    @keyframes nameEntrance {
+      from {
+        opacity: 0;
+        filter: blur(15px);
+        margin-bottom: -40px; /* Uso margin per non confliggere con il parallasse JS */
+      }
+      to {
+        opacity: 1;
+        filter: blur(0);
+        margin-bottom: 0;
+      }
+    }
+
+    @keyframes slideInTop {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 
@@ -106,12 +142,13 @@
   <section class="hero">
     <a href="https://www.instagram.com/loreh.hess/" target="_blank" class="instagram">Instagram</a>
     <h1 class="name">Lorenzo Hess</h1>
+    <div class="color-code"></div>
   </section>
 
   <!-- Seconda schermata -->
   <section class="projects">
     <h2>Progetti</h2>
-    <a href="/giorno2/es3/index.html">Progetto 1</a>
+    <a href="/giorno2/es3/index.html">Me, myself and AI</a>
     <a href="Progetto2">Progetto 2</a>
     <a href="#progetto3">Progetto 3</a>
     <a href="#progetto4">Progetto 4</a>
@@ -129,6 +166,7 @@
 
     const randomColor = getRandomColor();
     document.documentElement.style.setProperty('--main-color', randomColor);
+    document.querySelector('.color-code').textContent = randomColor;
 
     // --- 1. Effetto Parallasse sul Nome ---
     const heroSection = document.querySelector('.hero');

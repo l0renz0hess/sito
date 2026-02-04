@@ -16,30 +16,40 @@
 
 		/* Contenitore per i controlli dell'interfaccia */
 		.ui-controls {
-			position: absolute;
-			top: 20px;
-			left: 20px;
-			background-color: rgba(0, 0, 0, 0.3);
-			padding: 15px;
-			border-radius: 8px;
-			color: white;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 250px;
+			height: 100vh;
+			background-color: white;
+			padding: 30px;
+			box-sizing: border-box;
+			color: black;
 			z-index: 10;
-			border: 1px solid rgba(255, 255, 255, 0.2);
+			box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
 		}
 
 		.ui-controls a {
-			color: white;
+			color: black;
 			text-decoration: none;
 			display: block;
+			margin-bottom: 30px;
+			font-weight: bold;
+			transition: 0.1s;
 		}
 
 		.ui-controls a:hover {
-			text-decoration: underline;
+			color: var(--main-color);
+			padding-left: 10px;
+			transition: 0.3s;
 		}
 
 		/* Il canvas p5 occuperà tutto lo spazio */
 		canvas {
 			display: block;
+			position: absolute;
+			top: 0;
+			left: 250px;
 		}
 
 		.color-code {
@@ -88,10 +98,11 @@
 
 		function setup() {
 			// Crea un canvas che riempie l'intera finestra
-			createCanvas(windowWidth, windowHeight, WEBGL);
+			createCanvas(windowWidth - 250, windowHeight, WEBGL);
 
 			// --- Stile Pagina ---
 			const randomColorHex = getRandomColor();
+			document.documentElement.style.setProperty('--main-color', randomColorHex);
 			mainColor = color(randomColorHex); // Oggetto colore p5.js per lo sfondo
 
 			// Mostra il codice colore
@@ -104,11 +115,11 @@
 			// Crea un'etichetta per lo slider
 			const label = createP('Luminosità');
 			label.parent(uiContainer);
-			label.style('color', 'white');
-			label.style('margin', '15px 0 5px 0'); // Aggiunge spazio sotto il link
+			label.style('color', 'black');
+			label.style('margin', '0 0 8px 0'); // Rimuove il margine superiore e uniforma quello inferiore
 
 			// Crea lo slider per la luminosità e lo inserisce nel contenitore
-			brightnessSlider = createSlider(0, 255, 120); // min, max, valore iniziale
+			brightnessSlider = createSlider(0, 255, 255); // min, max, valore iniziale
 			brightnessSlider.parent(uiContainer);
 			brightnessSlider.style('width', '180px');
 			brightnessSlider.style('accent-color', randomColorHex);
@@ -116,8 +127,8 @@
 			// --- Velocità Rotazione ---
 			const speedLabel = createP('Velocità Rotazione');
 			speedLabel.parent(uiContainer);
-			speedLabel.style('color', 'white');
-			speedLabel.style('margin', '10px 0 5px 0');
+			speedLabel.style('color', 'black');
+			speedLabel.style('margin', '30px 0 8px 0'); // Aggiunge un margine superiore per separare i controlli
 
 			rotationSlider = createSlider(0, 0.05, 0.005, 0.001);
 			rotationSlider.parent(uiContainer);
@@ -127,8 +138,8 @@
 			// --- Checkbox Wireframe ---
 			wireframeCheckbox = createCheckbox(' Modalità Wireframe', false);
 			wireframeCheckbox.parent(uiContainer);
-			wireframeCheckbox.style('color', 'white');
-			wireframeCheckbox.style('margin-top', '15px');
+			wireframeCheckbox.style('color', 'black');
+			wireframeCheckbox.style('margin-top', '30px'); // Aggiunge un margine superiore per separare i controlli
 			wireframeCheckbox.style('accent-color', randomColorHex);
 		}
 
@@ -168,7 +179,7 @@
 
 		// Funzione per ridimensionare il canvas quando la finestra del browser cambia dimensione
 		function windowResized() {
-			resizeCanvas(windowWidth, windowHeight);
+			resizeCanvas(windowWidth - 250, windowHeight);
 		}
 
 	</script>

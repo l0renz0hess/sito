@@ -14,7 +14,7 @@
             background-color: var(--main-color);
         }
 
-        /* SIDEBAR FISSA */
+        /* --- SIDEBAR --- */
         .ui-controls {
             position: fixed; top: 0; left: 0;
             width: 250px; height: 100vh;
@@ -22,13 +22,12 @@
             padding: 30px; box-sizing: border-box;
             color: black; z-index: 100;
             box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
-            font-size: 1.5rem;
         }
 
         .ui-controls a {
             color: black; text-decoration: none;
             display: block; margin-bottom: 30px;
-            font-weight: normal;
+            font-size: 1.5rem;
             transition: 0.3s;
         }
 
@@ -47,83 +46,98 @@
             height: 100vh;
         }
 
-        /* BOLLA */
+        /* --- STRUTTURA BOLLA --- */
         .bubble-wrapper {
             position: absolute;
-            display: flex;
-            align-items: center;
             z-index: 10;
             cursor: pointer;
-            height: 120px;
             will-change: transform;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+        .bubble-wrapper.large { width: 150px; height: 150px; }
+        .bubble-wrapper.mini { width: 40px; height: 40px; z-index: 20; }
+
         .circle {
-            width: 120px; height: 120px;
             background-color: white;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
-            z-index: 2;
-            flex-shrink: 0;
+            transition: transform 0.2s ease;
+            z-index: 5;
+            position: relative;
         }
+        
+        .bubble-wrapper.large .circle { width: 150px; height: 150px; }
+        .bubble-wrapper.mini .circle { width: 40px; height: 40px; }
 
-        /* Effetto hover solo visivo, non fisico */
         .bubble-wrapper:hover .circle { transform: scale(1.1); }
-
         .circle img { width: 55%; height: auto; pointer-events: none; }
 
-        /* PANNELLO INFORMATIVO RETTANGOLARE */
+        /* --- ANIMAZIONE ONDA D'URTO (POTENZIATA) --- */
+        .shockwave {
+            position: absolute;
+            border: 4px solid white; /* Bordo più spesso */
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0.9;
+            /* Aggiunto un bagliore esterno */
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: wave-expand 0.8s cubic-bezier(0.1, 0.5, 0.5, 1) forwards;
+        }
+
+        @keyframes wave-expand {
+            0% { 
+                transform: translate(-50%, -50%) scale(0); 
+                opacity: 0.9; 
+            }
+            100% { 
+                transform: translate(-50%, -50%) scale(30); /* Espansione triplicata */
+                opacity: 0; 
+            }
+        }
+
+        /* --- PANNELLO INFORMATIVO --- */
         .info-panel {
+            position: absolute;
+            top: 5px; /* Recalculated for 150px bubble: (150 - 140) / 2 */
             background-color: white;
             color: black;
-            margin-left: -60px;
-            padding-left: 80px;
-            padding-right: 0;
-            border-radius: 0;
-            height: 120px;
-            max-width: 0;
-            overflow: hidden;
-            white-space: nowrap;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 140px;
+            width: 450px;
             opacity: 0;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            pointer-events: none;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
             z-index: 1;
+            transform: scaleX(0);
         }
 
-        .bubble-wrapper.active .info-panel {
-            max-width: 600px;
-            opacity: 1;
-            padding-right: 40px;
-        }
+        .bubble-wrapper:not(.reverse) .info-panel { left: 75px; padding-left: 95px; transform-origin: left center; }
+        .bubble-wrapper.reverse .info-panel { right: 75px; padding-right: 95px; padding-left: 30px; text-align: right; transform-origin: right center; }
+        .bubble-wrapper.active .info-panel { opacity: 1; transform: scaleX(1); pointer-events: auto; }
 
-        .info-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 3px;
-            transform: translateX(-20px);
-            transition: transform 0.5s ease 0.2s;
-        }
+        .info-title { font-size: 1.8rem; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; opacity: 0; transition: opacity 0.3s ease; white-space: nowrap; }
+        .info-data { font-size: 1.1rem; line-height: 1.3; opacity: 0; transition: opacity 0.3s ease; white-space: nowrap; }
+        .bubble-wrapper.active .info-title { opacity: 1; transition-delay: 0.3s; }
+        .bubble-wrapper.active .info-data { opacity: 0.8; transition-delay: 0.4s; }
 
-        .bubble-wrapper.active .info-title { transform: translateX(0); }
-
-        .info-data {
-            font-size: 0.95rem;
-            line-height: 1.3;
-            opacity: 0;
-            transition: opacity 0.5s ease 0.4s;
-        }
-
-        .bubble-wrapper.active .info-data { opacity: 0.8; }
-
+        /* --- CODICE COLORE --- */
         .color-code {
-            position: fixed; bottom: 20px; right: 20px;
-            color: rgba(255, 255, 255, 0.4);
-            font-family: monospace; font-size: 1.2rem; z-index: 50;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: monospace;
+            font-size: 1.2rem;
+            z-index: 10;
         }
     </style>
 </head>
@@ -135,24 +149,24 @@
     </div>
 
     <div id="canvas-container">
-        <div class="bubble-wrapper" id="bubble-hardware">
-            <div class="circle"><img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/HP_logo_2012.svg" alt="HP"></div>
+        <div class="bubble-wrapper large" id="bubble-hardware">
+            <div class="circle"><img src="hp_logo.png" alt="HP"></div>
             <div class="info-panel">
                 <div class="info-title">Spectre x360 13"</div>
                 <div class="info-data">OLED Touch 3K2K • 3:2 Ratio<br>16GB RAM • 1TB SSD • 1.36kg</div>
             </div>
         </div>
 
-        <div class="bubble-wrapper" id="bubble-spotify">
-            <div class="circle"><img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify"></div>
+        <div class="bubble-wrapper large" id="bubble-spotify">
+            <div class="circle"><img src="spotify_logo.png" alt="Spotify"></div>
             <div class="info-panel">
                 <div class="info-title">Spotify Rhythm</div>
-                <div class="info-data">Top Artist: Arctic Monkeys<br>Mood: Indie Rock • 12.4k min</div>
+                <div class="info-data">Minutes listened in the last 12 months:<br><strong>78'996</strong></div>
             </div>
         </div>
 
-        <div class="bubble-wrapper" id="bubble-focus">
-            <div class="circle"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg" alt="Focus"></div>
+        <div class="bubble-wrapper large" id="bubble-focus">
+            <div class="circle"><img src="VSstudio_logo.png" alt="Focus"></div>
             <div class="info-panel">
                 <div class="info-title">Daily Focus</div>
                 <div class="info-data">Main App: VS Code (6h 12m)<br>Uptime: 4 Days • 24 Open Tabs</div>
@@ -163,64 +177,149 @@
     <div id="color-code" class="color-code"></div>
 
     <script>
-        // --- 1. SETUP ESTETICO ---
-        const hexChars = '0123456789ABCDEF';
-        function getRandomColor() {
-            let color = '#';
-            for (let i = 0; i < 6; i++) color += hexChars[Math.floor(Math.random() * 16)];
-            return color;
-        }
-        const currentHex = getRandomColor();
-        document.documentElement.style.setProperty('--main-color', currentHex);
-        document.getElementById('color-code').innerText = currentHex;
-
-        // --- 2. MOTORE FISICO AUTONOMO ---
         const container = document.getElementById('canvas-container');
-        const bubbles = document.querySelectorAll('.bubble-wrapper');
-        
-        let bubbleData = Array.from(bubbles).map(b => ({
-            el: b,
-            x: Math.random() * (container.clientWidth - 200),
-            y: Math.random() * (container.clientHeight - 200),
-            vx: (Math.random() - 0.5) * 1.5,
-            vy: (Math.random() - 0.5) * 1.5
-        }));
+        const FRICTION = 0.96; 
+        const BASE_SPEED_LIMIT = 1.8; 
+
+        const randomColorHex = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+        document.documentElement.style.setProperty('--main-color', randomColorHex);
+        document.getElementById('color-code').textContent = randomColorHex;
+
+        let bubbleData = [];
+
+        // Inizializza bolle grandi
+        document.querySelectorAll('.bubble-wrapper.large').forEach(el => {
+            const data = {
+                el: el,
+                circle: el.querySelector('.circle'),
+                size: 150,
+                isMini: false,
+                x: Math.random() * (container.clientWidth - 150),
+                y: Math.random() * (container.clientHeight - 150),
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2
+            };
+            bubbleData.push(data);
+            assignClick(data);
+        });
+
+        // Funzione per creare la bolla piccola
+        function spawnMiniBubble() {
+            const miniEl = document.createElement('div');
+            miniEl.className = 'bubble-wrapper mini';
+            miniEl.innerHTML = '<div class="circle"></div>';
+            container.appendChild(miniEl);
+
+            const data = {
+                el: miniEl,
+                circle: miniEl.querySelector('.circle'),
+                size: 40,
+                isMini: true,
+                x: Math.random() * (container.clientWidth - 40),
+                y: Math.random() * (container.clientHeight - 40),
+                vx: (Math.random() - 0.5) * 10,
+                vy: (Math.random() - 0.5) * 10
+            };
+            bubbleData.push(data);
+            assignClick(data);
+        }
+
+        function createShockwave(x, y, color) {
+            const wave = document.createElement('div');
+            wave.className = 'shockwave';
+            wave.style.left = x + 'px';
+            wave.style.top = y + 'px';
+            wave.style.borderColor = color;
+            wave.style.boxShadow = `0 0 30px ${color}`; // Bagliore dello stesso colore della bolla
+            container.appendChild(wave);
+            
+            setTimeout(() => wave.remove(), 800);
+        }
+
+        function assignClick(data) {
+            data.el.onclick = (e) => {
+                e.stopPropagation();
+                if (data.isMini) {
+                    const waveColor = data.circle.style.backgroundColor || 'white';
+                    const centerX = data.x + data.size/2;
+                    const centerY = data.y + data.size/2;
+
+                    createShockwave(centerX, centerY, waveColor);
+
+                    bubbleData.forEach(other => {
+                        if (other !== data) {
+                            const dx = (other.x + other.size/2) - centerX;
+                            const dy = (other.y + other.size/2) - centerY;
+                            const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                            other.vx = (dx / dist) * 50; // Leggera spinta in più
+                            other.vy = (dy / dist) * 50;
+                            other.el.classList.remove('active');
+                        }
+                    });
+
+                    data.el.style.opacity = '0';
+                    data.el.style.transform += ' scale(2.5)';
+                    
+                    setTimeout(() => {
+                        data.el.remove();
+                        bubbleData = bubbleData.filter(item => item !== data);
+                        setTimeout(spawnMiniBubble, 5000);
+                    }, 100);
+                    return;
+                }
+
+                const isActive = data.el.classList.contains('active');
+                closeAllBubbles();
+                if (!isActive) {
+                    if (data.x + data.size/2 > container.clientWidth / 2) data.el.classList.add('reverse');
+                    data.el.classList.add('active');
+                }
+            };
+        }
+
+        function closeAllBubbles() {
+            bubbleData.forEach(b => {
+                if (b.el.classList.contains('active')) {
+                    b.el.classList.remove('active');
+                    setTimeout(() => b.el.classList.remove('reverse'), 500);
+                }
+            });
+        }
 
         function animate() {
             const cw = container.clientWidth;
             const ch = container.clientHeight;
 
             bubbleData.forEach((b, i) => {
-                // Il movimento avviene solo se la bolla non è attiva (aperta)
                 if (!b.el.classList.contains('active')) {
-                    
-                    b.x += b.vx;
-                    b.y += b.vy;
+                    const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+                    if (speed > (b.isMini ? 6 : BASE_SPEED_LIMIT)) {
+                        b.vx *= FRICTION; b.vy *= FRICTION;
+                    }
+                    b.x += b.vx; b.y += b.vy;
 
-                    // Rimbalzo bordi
                     if (b.x <= 0) { b.x = 0; b.vx = Math.abs(b.vx); }
-                    if (b.x + 120 >= cw) { b.x = cw - 120; b.vx = -Math.abs(b.vx); }
+                    if (b.x + b.size >= cw) { b.x = cw - b.size; b.vx = -Math.abs(b.vx); }
                     if (b.y <= 0) { b.y = 0; b.vy = Math.abs(b.vy); }
-                    if (b.y + 120 >= ch) { b.y = ch - 120; b.vy = -Math.abs(b.vy); }
+                    if (b.y + b.size >= ch) { b.y = ch - b.size; b.vy = -Math.abs(b.vy); }
 
-                    // Collisioni tra bolle
+                    if (b.isMini) {
+                        const hue = (b.x / cw) * 360;
+                        b.circle.style.backgroundColor = `hsl(${hue}, 80%, 60%)`;
+                    }
+
                     for (let j = i + 1; j < bubbleData.length; j++) {
                         let b2 = bubbleData[j];
-                        let dx = (b.x + 60) - (b2.x + 60);
-                        let dy = (b.y + 60) - (b2.y + 60);
-                        let distance = Math.sqrt(dx * dx + dy * dy);
-
-                        if (distance < 120) {
-                            // Scambio semplice di vettori (rimbalzo elastico)
+                        let dx = (b.x + b.size/2) - (b2.x + b2.size/2);
+                        let dy = (b.y + b.size/2) - (b2.y + b2.size/2);
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        let min = (b.size + b2.size) / 2;
+                        if (dist < min) {
                             let tempVx = b.vx; let tempVy = b.vy;
-                            b.vx = b2.vx; b.vy = b2.vy;
-                            b2.vx = tempVx; b2.vy = tempVy;
-                            
-                            // Risoluzione minima sovrapposizione
-                            let overlap = 120 - distance;
-                            let nx = dx / distance; let ny = dy / distance;
-                            b.x += nx * overlap / 2; b.y += ny * overlap / 2;
-                            b2.x -= nx * overlap / 2; b2.y -= ny * overlap / 2;
+                            b.vx = b2.vx; b.vy = b2.vy; b2.vx = tempVx; b2.vy = tempVy;
+                            let overlap = min - dist;
+                            b.x += (dx/dist) * overlap/2; b.y += (dy/dist) * overlap/2;
+                            b2.x -= (dx/dist) * overlap/2; b2.y -= (dy/dist) * overlap/2;
                         }
                     }
                 }
@@ -229,15 +328,8 @@
             requestAnimationFrame(animate);
         }
 
-        // --- 3. GESTIONE CLIC ---
-        bubbles.forEach(b => {
-            b.addEventListener('click', () => {
-                const isActive = b.classList.contains('active');
-                bubbles.forEach(other => other.classList.remove('active'));
-                if (!isActive) b.classList.add('active');
-            });
-        });
-
+        document.addEventListener('click', closeAllBubbles);
+        spawnMiniBubble();
         animate();
     </script>
 </body>

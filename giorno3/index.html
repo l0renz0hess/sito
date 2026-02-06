@@ -117,23 +117,23 @@
 
             const uiContainer = select('#ui-container');
 
-            createSpan('TESTO').addClass('label-ui').parent(uiContainer);
-            textInput = createInput('LH');
+            createSpan('Text').addClass('label-ui').parent(uiContainer);
+            textInput = createInput('Lorenz');
             textInput.parent(uiContainer).input(createLetters);
 
-            createSpan('RETURN SPEED').addClass('label-ui').parent(uiContainer);
+            createSpan('Return speed').addClass('label-ui').parent(uiContainer);
             magnetSlider = createSlider(1, 20, 8);
             magnetSlider.parent(uiContainer).style('width', '180px').style('accent-color', randomColorHex);
 
-            createSpan('MOUSE RADIUS').addClass('label-ui').parent(uiContainer);
+            createSpan('Mouse radius').addClass('label-ui').parent(uiContainer);
             sensitivitySlider = createSlider(50, 400, 180);
             sensitivitySlider.parent(uiContainer).style('width', '180px').style('accent-color', randomColorHex);
 
-            createSpan('WEB DISTANCE').addClass('label-ui').parent(uiContainer);
+            createSpan('Web distance').addClass('label-ui').parent(uiContainer);
             connectionSlider = createSlider(50, 400, 250);
             connectionSlider.parent(uiContainer).style('width', '180px').style('accent-color', randomColorHex);
 
-            createSpan('TURBULENCE').addClass('label-ui').parent(uiContainer);
+            createSpan('Turbulence').addClass('label-ui').parent(uiContainer);
             turbulenceSlider = createSlider(0, 100, 20);
             turbulenceSlider.parent(uiContainer).style('width', '180px').style('accent-color', randomColorHex);
 
